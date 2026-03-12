@@ -1,20 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create notes</title>
-</head>
-<body>
-    <form action="/notes" method="POST">
-        @csrf
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" required><br><br>
-        
-        <label for="content">Content:</label><br>
-        <textarea id="content" name="content" rows="4" cols="50" required></textarea><br><br>
-        
-        <button type="submit">Create Note</button>
-    </form>
-</body>
-</html>
+@extends('layouts.app')
+
+@section('title', 'Create Note')
+
+@section('content')
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-2xl">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Create a new note</h2>
+
+        @if ($errors->any())
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-red-700 font-medium mb-2">Please fix the following errors:</p>
+                <ul class="text-red-600 text-sm space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>• {{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('notes.store') }}" method="POST" class="space-y-6">
+            @csrf
+
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                    Title
+                </label>
+                <input 
+                    type="text" 
+                    id="title" 
+                    name="title" 
+                    placeholder="Enter note title"
+                    value="{{ old('title') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('title') border-red-500 @enderror"
+                    required
+                >
+                @error('title')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                    Content
+                </label>
+                <textarea 
+                    id="content" 
+                    name="content" 
+                    rows="8"
+                    placeholder="Write your note here..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('content') border-red-500 @enderror"
+                    required
+                >{{ old('content') }}</textarea>
+                @error('content')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="flex gap-3">
+                <button 
+                    type="submit" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition"
+                >
+                    Create Note
+                </button>
+                <a 
+                    href="{{ route('notes.index') }}" 
+                    class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition"
+                >
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+@endsection
