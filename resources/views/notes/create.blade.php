@@ -1,74 +1,80 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Create Note') }}
+        </h2>
+    </x-slot>
 
-@section('title', 'Create Note')
+    <div class="py-12">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-6">{{ __('Create a new note') }}</h1>
 
-@section('content')
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-2xl">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Create a new note</h2>
+                @if ($errors->any())
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <p class="text-red-700 font-medium mb-2">{{ __('Please fix the following errors:') }}</p>
+                        <ul class="text-red-600 text-sm space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>• {{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-        @if ($errors->any())
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p class="text-red-700 font-medium mb-2">Please fix the following errors:</p>
-                <ul class="text-red-600 text-sm space-y-1">
-                    @foreach ($errors->all() as $error)
-                        <li>• {{ $error }}</li>
-                    @endforeach
-                </ul>
+                <form action="{{ route('notes.store') }}" method="POST" class="space-y-6">
+                    @csrf
+
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ __('Title') }}
+                        </label>
+                        <input 
+                            type="text" 
+                            id="title" 
+                            name="title" 
+                            placeholder="{{ __('Enter note title') }}"
+                            value="{{ old('title') }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('title') border-red-500 @enderror"
+                            required
+                        >
+                        @error('title')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ __('Content') }}
+                        </label>
+                        <textarea 
+                            id="content" 
+                            name="content" 
+                            rows="10"
+                            placeholder="{{ __('Write your note here...') }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('content') border-red-500 @enderror"
+                            required
+                        >{{ old('content') }}</textarea>
+                        @error('content')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button 
+                            type="submit" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition"
+                        >
+                            {{ __('Create Note') }}
+                        </button>
+                        <a 
+                            href="{{ route('notes.index') }}" 
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition"
+                        >
+                            {{ __('Cancel') }}
+                        </a>
+                    </div>
+                </form>
             </div>
-        @endif
-
-        <form action="{{ route('notes.store') }}" method="POST" class="space-y-6">
-            @csrf
-
-            <div>
-                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
-                    Title
-                </label>
-                <input 
-                    type="text" 
-                    id="title" 
-                    name="title" 
-                    placeholder="Enter note title"
-                    value="{{ old('title') }}"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('title') border-red-500 @enderror"
-                    required
-                >
-                @error('title')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
-                    Content
-                </label>
-                <textarea 
-                    id="content" 
-                    name="content" 
-                    rows="8"
-                    placeholder="Write your note here..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('content') border-red-500 @enderror"
-                    required
-                >{{ old('content') }}</textarea>
-                @error('content')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="flex gap-3">
-                <button 
-                    type="submit" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition"
-                >
-                    Create Note
-                </button>
-                <a 
-                    href="{{ route('notes.index') }}" 
-                    class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition"
-                >
-                    Cancel
-                </a>
-            </div>
-        </form>
+        </div>
     </div>
-@endsection
+</x-app-layout>
