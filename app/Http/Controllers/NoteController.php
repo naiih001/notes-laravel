@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class NoteController extends Controller
@@ -12,7 +13,7 @@ class NoteController extends Controller
      */
     public function index()
     {
-        $notes = auth()->user()->notes()->latest()->get();
+        $notes = Auth::user()->notes()->latest()->get();
         return view('notes.index', compact('notes'));
     }
 
@@ -43,6 +44,7 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
+        $this->authorize('view', $note);
         return view('notes.show', compact('note'));
     }
 
@@ -51,6 +53,7 @@ class NoteController extends Controller
      */
     public function edit(Note $note)
     {
+        $this->authorize('update', $note);
         return view('notes.edit', compact('note'));
     }
 
@@ -59,6 +62,8 @@ class NoteController extends Controller
      */
     public function update(Request $request, Note $note)
     {
+        $this->authorize('update', $note);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
@@ -66,7 +71,7 @@ class NoteController extends Controller
 
         $note->update($validated);
 
-        return redirect()->route('notes.index');
+        return redirect()->route('notes.show', $note)->with('success', 'Note updated successfully.');
     }
 
     /**
@@ -74,6 +79,8 @@ class NoteController extends Controller
      */
     public function destroy(Note $note)
     {
+        $this->authorize('delete', $note);
+        
         $note->delete();
         return redirect()->route('notes.index')->with('success', 'Note deleted successfully.');
     }
